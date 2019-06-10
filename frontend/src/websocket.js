@@ -3,7 +3,7 @@ export function connect(address, topic) {
   const socket = new WebSocket(address + "/" + topic);
 
 
-  let message = {message: "Hello world!", sender: "Your grandma"}
+  let message = {clientMsgId: 1, message: "Hello world!", sender: "Your grandma"}
 
 // Connection opened
   socket.addEventListener('open', function (event) {

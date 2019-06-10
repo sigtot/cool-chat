@@ -12,8 +12,15 @@ import (
 )
 
 type message struct {
-	Message string `json:"message"`
-	Sender string `json:"sender"`
+	ClientMsgId int    `json:"clientMsgId"`
+	ServerMsgId int    `json:"serverMsgId"`
+	Message     string `json:"message"`
+	Sender      string `json:"sender"`
+}
+
+type recvNotification struct {
+	ClientMsgId int `json:"clientMsgId"`
+	ServerMsgId int `json:"serverMsgId"`
 }
 
 func readWriteToRedis(ws *websocket.Conn, topic string) {
@@ -23,6 +30,11 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 		Password: "",               // no password set
 		DB:       0,                // use default DB
 	})
+
+	if redisdb.Exists(topic).Val() != 1 {
+		log.Printf("First time seeing topic %s: Initializing message counter at 1.\n", topic)
+		redisdb.Set(topic, 1, 0)
+	}
 
 	pubsub := redisdb.Subscribe(topic)
 
@@ -38,7 +50,7 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 	go func() {
 		defer func() {
 			wg.Done()
-			quitRedis<- 0
+			quitRedis <- 0
 		}()
 		var msg message
 		for {
@@ -49,6 +61,10 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 				log.Printf("Could not receive json: %s\n", err.Error())
 				continue
 			}
+
+			msg.ServerMsgId = int(redisdb.Incr(topic).Val())
+			websocket.JSON.Send(ws, recvNotification{ClientMsgId: msg.ClientMsgId, ServerMsgId: msg.ServerMsgId})
+
 			msgStr, err := json.Marshal(msg)
 			if err != nil {
 				panic(err)
@@ -64,14 +80,14 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 
 		for {
 			select {
-				case redisMsg := <-pubsubCh:
-					var msg message
-					if err := json.Unmarshal([]byte(redisMsg.Payload), &msg); err != nil {
-						panic("Could not unmarshal redis message: " + err.Error())
-					}
-					websocket.JSON.Send(ws, msg)
-				case <-quitRedis:
-					return
+			case redisMsg := <-pubsubCh:
+				var msg message
+				if err := json.Unmarshal([]byte(redisMsg.Payload), &msg); err != nil {
+					panic("Could not unmarshal redis message: " + err.Error())
+				}
+				websocket.JSON.Send(ws, msg)
+			case <-quitRedis:
+				return
 			}
 		}
 	}()
