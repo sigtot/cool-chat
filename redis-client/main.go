@@ -2,10 +2,10 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/go-redis/redis"
 	"golang.org/x/net/websocket"
 	"io"
+	"log"
 	"net/http"
 	"strings"
 	"sync"
@@ -16,8 +16,8 @@ type message struct {
 	Sender string `json:"sender"`
 }
 
-func readWriteToRedis(ws * websocket.Conn, topic string) {
-	fmt.Println("New client")
+func readWriteToRedis(ws *websocket.Conn, topic string) {
+	log.Println("New client")
 	redisdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379", // use default Addr
 		Password: "",               // no password set
@@ -46,7 +46,7 @@ func readWriteToRedis(ws * websocket.Conn, topic string) {
 				if err == io.EOF {
 					return
 				}
-				fmt.Printf("Could not receive json: %s\n", err.Error())
+				log.Printf("Could not receive json: %s\n", err.Error())
 				continue
 			}
 			msgStr, err := json.Marshal(msg)
@@ -74,7 +74,6 @@ func readWriteToRedis(ws * websocket.Conn, topic string) {
 					return
 			}
 		}
-		fmt.Println("No longer receiving from redis")
 	}()
 
 	wg.Wait()
@@ -84,7 +83,7 @@ func readWriteToRedis(ws * websocket.Conn, topic string) {
 	if err := redisdb.Close(); err != nil {
 		panic(err)
 	}
-	fmt.Println("Dropped client")
+	log.Println("Dropped client")
 }
 func wsHandler(ws *websocket.Conn) {
 	urlSplit := strings.Split(ws.Request().URL.Path, "/")
@@ -96,7 +95,7 @@ func wsHandler(ws *websocket.Conn) {
 }
 
 func main() {
-	fmt.Println("Starting websocket chat server")
+	log.Println("Starting websocket chat server")
 	http.Handle("/", websocket.Handler(wsHandler))
 	if err := http.ListenAndServe(":9000", nil); err != nil {
 		panic("ListenAndServe: " + err.Error())
