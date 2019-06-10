@@ -1,8 +1,10 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import {connect} from './websocket'
 
 function App() {
+  connect("ws://localhost:9000", "dogs")
   return (
     <div className="App">
       <header className="App-header">

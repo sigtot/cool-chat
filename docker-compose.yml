@@ -13,6 +13,7 @@ services:
       - NODE_ENV=development
   redis-client:
     build: ./redis-client
+    network_mode: host
     ports:
       - "9000:9000"
     volumes:
