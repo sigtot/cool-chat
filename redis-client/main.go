@@ -24,7 +24,7 @@ type recvNotification struct {
 }
 
 func readWriteToRedis(ws *websocket.Conn, topic string) {
-	log.Println("New client")
+	log.Printf("New client on topic %s\n", topic)
 	redisdb := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379", // use default Addr
 		Password: "",               // no password set
@@ -99,7 +99,7 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 	if err := redisdb.Close(); err != nil {
 		panic(err)
 	}
-	log.Println("Dropped client")
+	log.Printf("Dropped client on topic %s\n", topic)
 }
 func wsHandler(ws *websocket.Conn) {
 	urlSplit := strings.Split(ws.Request().URL.Path, "/")
