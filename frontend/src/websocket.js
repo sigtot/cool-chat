@@ -2,11 +2,10 @@ export function connect(address, topic) {
 // Create WebSocket connection.
   const socket = new WebSocket(address + "/" + topic);
 
-
   let message = {clientMsgId: 1, message: "Hello world!", sender: "Your grandma"}
 
 // Connection opened
-  socket.addEventListener('open', function (event) {
+  socket.addEventListener('open', (event) => {
     socket.send(JSON.stringify(message));
   });
 

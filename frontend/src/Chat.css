@@ -1,0 +1,12 @@
+.center-spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 50px;
+  margin-left: -25px;
+}
+.hidden {
+  opacity: 0;
+  pointer-events: none;
+  user-input: none;
+}
