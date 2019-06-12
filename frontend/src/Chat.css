@@ -16,6 +16,7 @@
   width: 100%;
   max-width: 768px;
   background:#fff;
+  overflow: hidden;
 
   display:flex;
   flex-direction: column;
@@ -28,9 +29,30 @@
   }
 }
 
+.Chat-top {
+  height: 50px;
+  background:#2196f3;
+  padding: 0 10px;
+  box-sizing: border-box;
+  line-height: 50px;
+  display:flex;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.Chat-top .topic {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.Chat-top .name {
+  font-size: 0.9em;
+}
+
 .Chat-message-area {
   flex-grow: 1;
   overflow: scroll;
+  overflow-x: hidden;
 }
 
 .Chat-input-area {

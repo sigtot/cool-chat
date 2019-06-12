@@ -112,6 +112,10 @@ export class Chat extends React.Component {
   render () {
     return (
       <div className="Chat">
+        <div className="Chat-top">
+          <div className="topic">{this.props.topic}</div>
+          <div className="name">Speaking as <b>{this.props.senderName}</b></div>
+        </div>
         <MessageContainer
           messages={this.state.messages}
           senderName={this.props.senderName}
