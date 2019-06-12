@@ -1,0 +1,31 @@
+.MessageState {
+  height: 7px;
+  width: 7px;
+  border-radius: 6px;
+  border: 1px solid #2196f3;
+  display:inline-block;
+  margin-left: 5px;
+  font-size: 8px;
+  line-height: 8px;
+}
+
+.MessageState:after {
+  content: "\2713";
+  margin-left: 1px;
+}
+
+.MessageState.sent {
+  color: rgba(0,0,0,0);
+}
+
+.MessageState.recv {
+  color: #2196f3;
+  background: transparent;
+}
+
+.MessageState.published {
+  color: #fff;
+  background: #2196f3;
+}
+
+
