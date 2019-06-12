@@ -2,6 +2,7 @@ import React from 'react'
 import spinner from './spinner.svg'
 import './Chat.css'
 import {SentMessage} from './SentMessage'
+import {RecvMessage} from './RecvMessage'
 
 const MSG_STATE_SENT_TO_SERVER = 0;
 const MSG_STATE_RECV_BY_SERVER = 1;
@@ -30,7 +31,19 @@ export class Chat extends React.Component {
       if (msg.type === "recvAck") {
         this.updateMessageState(msg.clientMsgId, MSG_STATE_RECV_BY_SERVER)
       } else if (msg.type === "message") {
-        this.updateMessageState(msg.clientMsgId, MSG_STATE_SENT_TO_PUBLISHERS)
+        if (msg.sender === this.props.senderName) {
+          this.updateMessageState(msg.clientMsgId, MSG_STATE_SENT_TO_PUBLISHERS)
+        } else {
+          this.setState(prevState => ({
+            messages: [...prevState.messages, {
+              text: msg.message,
+              sender: msg.sender,
+              type: msg.type,
+              clientMsgId: msg.clientMsgId,
+              time: new Date(),
+            }]
+          }))
+        }
       }
     };
   }
@@ -83,8 +96,7 @@ export class Chat extends React.Component {
       this.setState({
         shiftIsDown: true
       });
-    }
-    if (event.key === "Enter" && !this.state.shiftIsDown) {
+    } else if (event.key === "Enter" && !this.state.shiftIsDown) {
       this.sendIfNotEmpty(event)
     }
   }
@@ -110,8 +122,14 @@ export class Chat extends React.Component {
                   msgState={message.msgState}
                   key={i}
                 />
+              } else {
+                return <RecvMessage
+                  text={message.text}
+                  time={message.time}
+                  sender={message.sender}
+                  key={i}
+                />
               }
-              return ''
             })
           }
         </div>
