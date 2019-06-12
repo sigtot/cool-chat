@@ -19,7 +19,7 @@ export class Chat extends React.Component {
   };
 
   componentDidMount() {
-    let socket = new WebSocket("ws://localhost:9000/" + this.props.topic);
+    let socket = new WebSocket(process.env.REACT_APP_WS_SERVER_ADDR + "/" + this.props.topic);
     socket.onopen = () => {
       this.setState({
         socket: socket,

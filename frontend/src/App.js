@@ -32,7 +32,6 @@ class App extends React.Component {
     let contents = undefined;
 
     if (this.state.showChat) {
-      console.log("what");
       contents = (<Chat className="App-chat" topic={this.state.topic}
                         senderName={this.state.senderName}/>)
     }
