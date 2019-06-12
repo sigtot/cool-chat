@@ -10,3 +10,58 @@
   pointer-events: none;
   user-input: none;
 }
+
+.Chat {
+  height: 100%;
+  width: 100%;
+  max-width: 768px;
+  background:#fff;
+
+  display:flex;
+  flex-direction: column;
+}
+
+@media(min-width: 769px) {
+  .Chat {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+}
+
+.Chat-message-area {
+  flex-grow: 1;
+}
+
+.Chat-input-area {
+  height: 50px;
+  border-top: 1px solid #eee;
+  padding: 10px;
+}
+
+.Chat-input-area form {
+  height: 100%;
+  display: flex;
+}
+
+.Chat-input-area textarea {
+  height: 100%;
+
+  outline: none;
+  resize: none;
+  border: none;
+
+  flex-grow: 1;
+  font-family: Helvetica, serif;
+}
+
+.Chat-input-area input[type="image"] {
+  flex-grow: 0;
+  flex-basis: 36px;
+  min-width: 0;
+  padding: 7px;
+  outline: none;
+}
+
+.Chat-input-area input[type="image"].disabled {
+  filter: grayscale(100%) opacity(70%);
+}

@@ -1,5 +1,6 @@
 import React from 'react'
 import spinner from './spinner.svg'
+import sendIcon from './send.svg'
 import './Chat.css'
 import {SentMessage} from './SentMessage'
 import {RecvMessage} from './RecvMessage'
@@ -111,8 +112,8 @@ export class Chat extends React.Component {
 
   render () {
     return (
-      <div>
-        <div>
+      <div className="Chat">
+        <div className="Chat-message-area">
           {
             this.state.messages.map((message, i) => {
               if (message.sender === this.props.senderName) {
@@ -133,17 +134,25 @@ export class Chat extends React.Component {
             })
           }
         </div>
-        <form onSubmit={this.sendIfNotEmpty}>
-          <textarea name="messageText"
-                    value={this.state.messageText}
-                    onKeyDown={this.textAreaKeyDown}
-                    onKeyUp={this.textAreaKeyUp}
-                    onChange={this.onMessageTextChange} />
-          <input type="submit" value="Send"/>
-        </form>
+        <div className="Chat-input-area">
+          <form onSubmit={this.sendIfNotEmpty}>
+            <textarea name="messageText"
+                      value={this.state.messageText}
+                      onKeyDown={this.textAreaKeyDown}
+                      onKeyUp={this.textAreaKeyUp}
+                      onChange={this.onMessageTextChange}
+                      placeholder="Type a message..."
+            />
+            <input className={this.state.messageText === '' ? 'disabled': ''}
+                   type="image" name="submit" src={sendIcon} alt="Send"
+            />
+          </form>
+        </div>
+
         <img src={spinner}
              className={`center-spinner ${this.state.connected ? 'hidden' : ''}`}
-             alt="loading"/>
+             alt="loading"
+        />
       </div>
     )
   }

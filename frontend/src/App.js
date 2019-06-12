@@ -5,10 +5,9 @@ import {Chat} from './Chat'
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <p>Cool Chat</p>
-        <Chat topic="dogs" senderName="memerboi"/>
-      </header>
+      <div className="App-main-container">
+        <Chat className="App-chat" topic="dogs" senderName="memerboi"/>
+      </div>
     </div>
   );
 }
