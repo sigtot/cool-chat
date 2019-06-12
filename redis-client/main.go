@@ -11,16 +11,22 @@ import (
 	"sync"
 )
 
+const MessageType = "message"
+
 type message struct {
 	ClientMsgId int    `json:"clientMsgId"`
 	ServerMsgId int    `json:"serverMsgId"`
 	Message     string `json:"message"`
 	Sender      string `json:"sender"`
+	Type        string `json:"type"`
 }
 
-type recvNotification struct {
-	ClientMsgId int `json:"clientMsgId"`
-	ServerMsgId int `json:"serverMsgId"`
+const RecvAckType = "recvAck"
+
+type recvAck struct {
+	ClientMsgId int    `json:"clientMsgId"`
+	ServerMsgId int    `json:"serverMsgId"`
+	Type        string `json:"type"`
 }
 
 func readWriteToRedis(ws *websocket.Conn, topic string) {
@@ -63,8 +69,13 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 			}
 
 			msg.ServerMsgId = int(redisdb.Incr(topic).Val())
-			websocket.JSON.Send(ws, recvNotification{ClientMsgId: msg.ClientMsgId, ServerMsgId: msg.ServerMsgId})
+			websocket.JSON.Send(ws, recvAck{
+				ClientMsgId: msg.ClientMsgId,
+				ServerMsgId: msg.ServerMsgId,
+				Type:        RecvAckType,
+			})
 
+			msg.Type = MessageType
 			msgStr, err := json.Marshal(msg)
 			if err != nil {
 				panic(err)
@@ -101,6 +112,7 @@ func readWriteToRedis(ws *websocket.Conn, topic string) {
 	}
 	log.Printf("Dropped client on topic %s\n", topic)
 }
+
 func wsHandler(ws *websocket.Conn) {
 	urlSplit := strings.Split(ws.Request().URL.Path, "/")
 	if len(urlSplit) == 2 && urlSplit[0] == "" {

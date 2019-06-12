@@ -1,6 +1,11 @@
 import React from 'react'
 import spinner from './spinner.svg'
 import './Chat.css'
+import {SentMessage} from './SentMessage'
+
+const MSG_STATE_SENT_TO_SERVER = 0;
+const MSG_STATE_RECV_BY_SERVER = 1;
+const MSG_STATE_SENT_TO_PUBLISHERS = 2;
 
 export class Chat extends React.Component {
   state = {
@@ -9,6 +14,7 @@ export class Chat extends React.Component {
     connected: false,
     clientMsgId: 1,
     shiftIsDown: false,
+    messages: [],
   };
 
   componentDidMount() {
@@ -20,8 +26,25 @@ export class Chat extends React.Component {
       });
     };
     socket.onmessage = (event) => {
-      console.log("Message from server: ", event.data);
+      let msg = JSON.parse(event.data)
+      if (msg.type === "recvAck") {
+        this.updateMessageState(msg.clientMsgId, MSG_STATE_RECV_BY_SERVER)
+      } else if (msg.type === "message") {
+        this.updateMessageState(msg.clientMsgId, MSG_STATE_SENT_TO_PUBLISHERS)
+      }
     };
+  }
+
+  updateMessageState(clientMsgId, state) {
+    this.setState(prevState => ({
+      messages: prevState.messages.map(message => {
+        if (message.sender === this.props.senderName &&
+          message.clientMsgId === clientMsgId) {
+          message.msgState = state;
+        }
+        return message
+      })
+    }))
   }
 
   onMessageTextChange = event => {
@@ -39,12 +62,19 @@ export class Chat extends React.Component {
       this.state.socket.send(JSON.stringify({
         clientMsgId: this.state.clientMsgId,
         message: this.state.messageText,
-        sender: 'its me lol',
+        sender: this.props.senderName,
       }))
-      this.setState({
+      this.setState(prevState => ({
         messageText: '',
-        clientMsgId: this.state.clientMsgId + 1,
-      })
+        clientMsgId: prevState.clientMsgId + 1,
+        messages: [...prevState.messages, {
+          text: prevState.messageText,
+          time: new Date(),
+          msgState: MSG_STATE_SENT_TO_SERVER,
+          sender: this.props.senderName,
+          clientMsgId: prevState.clientMsgId,
+        }]
+      }))
     })
   }
 
@@ -70,9 +100,21 @@ export class Chat extends React.Component {
   render () {
     return (
       <div>
-        <img src={spinner}
-             className={`center-spinner ${this.state.connected ? 'hidden' : ''}`}
-             alt="loading"/>
+        <div>
+          {
+            this.state.messages.map((message, i) => {
+              if (message.sender === this.props.senderName) {
+                return <SentMessage
+                  text={message.text}
+                  time={message.time}
+                  msgState={message.msgState}
+                  key={i}
+                />
+              }
+              return ''
+            })
+          }
+        </div>
         <form onSubmit={this.sendIfNotEmpty}>
           <textarea name="messageText"
                     value={this.state.messageText}
@@ -81,6 +123,9 @@ export class Chat extends React.Component {
                     onChange={this.onMessageTextChange} />
           <input type="submit" value="Send"/>
         </form>
+        <img src={spinner}
+             className={`center-spinner ${this.state.connected ? 'hidden' : ''}`}
+             alt="loading"/>
       </div>
     )
   }

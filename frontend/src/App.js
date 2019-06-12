@@ -7,7 +7,7 @@ function App() {
     <div className="App">
       <header className="App-header">
         <p>Cool Chat</p>
-        <Chat topic="dogs"/>
+        <Chat topic="dogs" senderName="memerboi"/>
       </header>
     </div>
   );
