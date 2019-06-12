@@ -142,6 +142,7 @@ export class Chat extends React.Component {
                       onKeyUp={this.textAreaKeyUp}
                       onChange={this.onMessageTextChange}
                       placeholder="Type a message..."
+                      autoFocus
             />
             <input className={this.state.messageText === '' ? 'disabled': ''}
                    type="image" name="submit" src={sendIcon} alt="Send"

@@ -30,6 +30,7 @@
 
 .Chat-message-area {
   flex-grow: 1;
+  overflow: scroll;
 }
 
 .Chat-input-area {

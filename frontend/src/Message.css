@@ -1,0 +1,53 @@
+.Message {
+  padding: 10px;
+}
+
+.Message-sent {
+  text-align: right;
+}
+
+p {
+  margin: 0;
+  padding: 0;
+}
+
+.Message-bubble {
+  background:#eee;
+  max-width: 62%;
+  border-radius: 10px;
+  padding: 10px;
+  color: #333;
+  font-size: 1em;
+  display:inline-block;
+
+  position: relative;
+}
+
+.Message-sent .Message-bubble {
+  background: #2196f3;
+  color: #fff;
+}
+
+.Message-sender {
+  font-weight: bold;
+  margin: 0;
+  padding-left: 10px;
+  color: #555;
+  font-size: 0.9em;
+}
+
+.Message-sender:after {
+  content: ":";
+}
+
+.Message-time {
+  color:#999;
+  font-size: 0.7em;
+  padding-left: 10px;
+}
+
+.Message-state {
+  position:absolute;
+  right: 10px;
+  bottom: -20px;
+}
