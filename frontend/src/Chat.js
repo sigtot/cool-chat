@@ -2,8 +2,7 @@ import React from 'react'
 import spinner from './spinner.svg'
 import sendIcon from './send.svg'
 import './Chat.css'
-import {SentMessage} from './SentMessage'
-import {RecvMessage} from './RecvMessage'
+import {MessageContainer} from './MessageContainer'
 
 const MSG_STATE_SENT_TO_SERVER = 0;
 const MSG_STATE_RECV_BY_SERVER = 1;
@@ -113,27 +112,10 @@ export class Chat extends React.Component {
   render () {
     return (
       <div className="Chat">
-        <div className="Chat-message-area">
-          {
-            this.state.messages.map((message, i) => {
-              if (message.sender === this.props.senderName) {
-                return <SentMessage
-                  text={message.text}
-                  time={message.time}
-                  msgState={message.msgState}
-                  key={i}
-                />
-              } else {
-                return <RecvMessage
-                  text={message.text}
-                  time={message.time}
-                  sender={message.sender}
-                  key={i}
-                />
-              }
-            })
-          }
-        </div>
+        <MessageContainer
+          messages={this.state.messages}
+          senderName={this.props.senderName}
+        />
         <div className="Chat-input-area">
           <form onSubmit={this.sendIfNotEmpty}>
             <textarea name="messageText"
